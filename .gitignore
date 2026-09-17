@@ -1,0 +1,17 @@
+# Windows thumbnail cache and desktop.ini
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Mac DS_Store
+.DS_Store
+
+# Temporary files & logs
+*.log
+*.tmp
+*.bak
+scratch/
+
+# IDE / Editor folders
+.vscode/
+.idea/
