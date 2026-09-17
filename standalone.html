@@ -2,707 +2,998 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ระบบทำข้อสอบวิทยาศาสตร์ (Local Preview)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ระบบทำข้อสอบวิทยาศาสตร์ ม.ปลาย (Local Preview)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
+  
   <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, Arial;
-      max-width: 850px;
-      margin: 30px auto;
-      padding: 20px;
-      background: #f5f7fb;
-      color: #1f2937;
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --bio-color: #059669;
+      --chm-color: #d97706;
+      --phy-color: #4f46e5;
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --radius: 12px;
+      --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
     }
 
-    .banner {
-      background: #e0f2fe;
-      border: 1px solid #7dd3fc;
-      color: #0369a1;
-      padding: 10px 14px;
-      border-radius: 8px;
+    * {
+      box-sizing: border-box;
+      font-family: 'Prompt', 'Sarabun', -apple-system, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px 16px;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .preview-banner {
+      background: #ecfeff;
+      border: 1.5px solid #a5f3fc;
+      color: #0891b2;
+      padding: 10px 16px;
+      border-radius: 10px;
       font-size: 13px;
-      margin-bottom: 15px;
+      margin-bottom: 18px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      width: 100%;
+      max-width: 860px;
     }
 
     .view { display: none; }
-    .view.active { display: block; }
+    .view.active { display: block; animation: fadeIn 0.25s ease-out; }
 
-    .card {
-      background: white;
-      padding: 26px;
-      border-radius: 14px;
-      box-shadow: 0 4px 18px rgba(0,0,0,.08);
-      position: relative;
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    input, button {
+    .card {
+      background: var(--surface);
+      padding: 32px 28px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+
+    h1, h2, h3 {
+      margin-top: 0;
+      color: #0f172a;
+      font-weight: 600;
+    }
+    h1 { font-size: 26px; }
+    h2 { font-size: 20px; }
+
+    p {
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    label {
+      display: block;
+      font-weight: 500;
+      font-size: 14px;
+      margin-bottom: 6px;
+      color: #334155;
+    }
+
+    input, select {
       width: 100%;
-      box-sizing: border-box;
-      padding: 11px;
-      margin: 7px 0 14px;
-      border: 1px solid #cbd5e1;
+      padding: 12px 14px;
+      margin-bottom: 16px;
+      border: 1.5px solid var(--border);
       border-radius: 8px;
-      font-size: 16px;
+      font-size: 15px;
+      background: #fdfdfd;
+      color: var(--text);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+      background: #ffffff;
     }
 
     button {
-      border: 0;
-      background: #2563eb;
-      color: white;
-      font-weight: bold;
+      width: 100%;
+      padding: 12px 18px;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
       cursor: pointer;
-      transition: background 0.2s;
-    }
-
-    button:hover { background: #1d4ed8; }
-
-    .secondary { background: #64748b; }
-    .secondary:hover { background: #475569; }
-    .danger { background: #dc2626; }
-    .danger:hover { background: #b91c1c; }
-    .warning { background: #d97706; }
-    .warning:hover { background: #b45309; }
-    .small { width: auto; padding: 6px 10px; margin: 2px; font-size: 13px; }
-
-    .role-buttons {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-    }
-
-    .topbar {
-      display: flex;
+      background: var(--primary);
+      color: white;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      justify-content: center;
       align-items: center;
-      justify-content: space-between;
       gap: 8px;
-      margin-bottom: 20px;
     }
+    button:hover { background: var(--primary-hover); transform: translateY(-1px); }
+    button:active { transform: translateY(0); }
 
-    .topbar button { width: auto; margin: 0; }
+    .btn-secondary { background: #64748b; margin-top: 8px; }
+    .btn-secondary:hover { background: #475569; }
+    .btn-danger { background: #ef4444; }
+    .btn-danger:hover { background: #dc2626; }
+    .btn-warning { background: #f59e0b; color: white; }
+    .btn-warning:hover { background: #d97706; }
+    .btn-outline { background: transparent; border: 1.5px solid var(--border); color: #334155; }
+    .btn-outline:hover { background: #f1f5f9; border-color: #cbd5e1; }
+    .btn-small { width: auto; padding: 6px 12px; font-size: 13px; }
 
-    .error {
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .badge-bio { background: #ecfdf5; color: var(--bio-color); border: 1px solid #a7f3d0; }
+    .badge-chm { background: #fffbeb; color: var(--chm-color); border: 1px solid #fde68a; }
+    .badge-phy { background: #eef2ff; color: var(--phy-color); border: 1px solid #c7d2fe; }
+    .badge-gen { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
+
+    .diff-easy { background: #dcfce7; color: #15803d; }
+    .diff-medium { background: #fef3c7; color: #b45309; }
+    .diff-hard { background: #fee2e2; color: #b91c1c; }
+
+    .error-box {
       color: #b91c1c;
-      background: #fee2e2;
+      background: #fef2f2;
       border: 1px solid #fecaca;
       border-radius: 8px;
-      padding: 10px 14px;
-      margin-bottom: 12px;
+      padding: 12px 14px;
+      margin-bottom: 16px;
+      font-size: 14px;
       display: none;
     }
-    .error:not(:empty) {
-      display: block;
-    }
+    .error-box:not(:empty) { display: block; }
 
-    .room-code {
-      padding: 15px;
+    .role-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 20px;
+    }
+    @media (max-width: 600px) {
+      .role-grid { grid-template-columns: 1fr; }
+    }
+    .role-card {
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 24px 20px;
       text-align: center;
-      color: #1d4ed8;
-      background: #eff6ff;
-      border-radius: 10px;
-      font-size: 22px;
-      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: white;
     }
+    .role-card:hover {
+      border-color: var(--primary);
+      box-shadow: 0 8px 16px rgba(37, 99, 235, 0.08);
+      transform: translateY(-2px);
+    }
+    .role-icon { font-size: 36px; margin-bottom: 8px; display: block; }
 
-    /* Timer Styles */
-    .timer-container {
-      position: sticky;
-      top: 10px;
-      z-index: 100;
-      background: #ffffff;
-      border: 2px solid #2563eb;
-      border-radius: 10px;
-      padding: 10px 16px;
-      margin-bottom: 16px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    /* ⏱️ STICKY FLOATING HEADER (ลอยตามหน้าจอ) */
+    .sticky-timer-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1.5px solid rgba(226, 232, 240, 0.8);
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.08);
+      padding: 10px 20px;
       display: flex;
       flex-direction: column;
       gap: 6px;
     }
-    .timer-header {
+    .sticky-content {
+      max-width: 860px;
+      width: 100%;
+      margin: 0 auto;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      font-weight: bold;
-      font-size: 17px;
+      justify-content: space-between;
     }
-    .timer-text {
-      color: #1d4ed8;
+    .timer-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #eff6ff;
+      border: 1.5px solid #bfdbfe;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--primary);
       font-family: monospace;
-      font-size: 20px;
+      letter-spacing: 0.5px;
     }
-    .timer-text.urgent {
+    .timer-badge.urgent {
+      background: #fef2f2;
+      border-color: #fca5a5;
       color: #dc2626;
       animation: pulse 1s infinite;
     }
-    .timer-progress {
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.04); }
+    }
+    .progress-track {
+      max-width: 860px;
       width: 100%;
-      height: 8px;
+      margin: 0 auto;
+      height: 6px;
       background: #e2e8f0;
-      border-radius: 4px;
+      border-radius: 9999px;
       overflow: hidden;
     }
-    .timer-progress-fill {
+    .progress-fill {
       height: 100%;
       width: 100%;
-      background: #2563eb;
+      background: var(--primary);
       transition: width 1s linear, background-color 0.3s;
     }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
+
+    .exam-body {
+      margin-top: 75px;
+    }
+    .question-card {
+      background: white;
+      border-radius: 12px;
+      padding: 22px;
+      margin-bottom: 20px;
+      border: 1px solid var(--border);
+      border-left: 5px solid var(--primary);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+    }
+    .question-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .choice-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 14px;
+      margin-top: 10px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .choice-item:hover {
+      border-color: #93c5fd;
+      background: #f8fafc;
+    }
+    .choice-item input {
+      width: auto;
+      margin: 0 12px 0 0;
+      cursor: pointer;
+    }
+    .choice-letter {
+      font-weight: 700;
+      margin-right: 8px;
+      color: #3b82f6;
     }
 
-    /* Anti-Cheat Modal */
-    .modal-overlay {
+    .question-card.correct { border-left-color: #10b981; background: #f0fdf4; }
+    .question-card.incorrect { border-left-color: #ef4444; background: #fef2f2; }
+    .choice-item.correct-choice {
+      border-color: #10b981;
+      background: #dcfce7;
+      font-weight: 600;
+    }
+
+    .calculator-modal {
+      display: none;
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 1050;
+      background: white;
+      border-radius: 14px;
+      padding: 16px;
+      width: 280px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+      border: 1px solid var(--border);
+    }
+    .calculator-modal.active { display: block; }
+    .calc-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      margin-top: 10px;
+    }
+    .calc-grid button {
+      width: auto;
+      padding: 10px 0;
+      margin: 0;
+      background: #f1f5f9;
+      color: #1e293b;
+      font-size: 15px;
+    }
+    .calc-grid .calc-equal { background: #10b981; color: white; }
+
+    .anti-cheat-overlay {
       display: none;
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(15, 23, 42, 0.75);
-      z-index: 1000;
+      background: rgba(15, 23, 42, 0.85);
+      z-index: 2000;
       align-items: center;
       justify-content: center;
       padding: 20px;
     }
-    .modal-overlay.active {
-      display: flex;
-    }
-    .modal-box {
+    .anti-cheat-overlay.active { display: flex; }
+    .anti-cheat-box {
       background: white;
-      max-width: 460px;
+      max-width: 480px;
       width: 100%;
-      padding: 24px;
-      border-radius: 12px;
+      padding: 32px 24px;
+      border-radius: 16px;
       text-align: center;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.25);
-      border-top: 6px solid #dc2626;
-    }
-    .modal-box h2 {
-      color: #dc2626;
-      margin-top: 0;
-    }
-    .warning-badge {
-      display: inline-block;
-      padding: 3px 8px;
-      border-radius: 6px;
-      font-size: 12px;
-      font-weight: bold;
-    }
-    .badge-ok { background: #dcfce7; color: #15803d; }
-    .badge-warn { background: #fef3c7; color: #b45309; }
-    .badge-danger { background: #fee2e2; color: #b91c1c; }
-
-    .question {
-      margin-top: 18px;
-      padding: 16px;
-      border-left: 5px solid #2563eb;
-      background: #f8fafc;
-      border-radius: 8px;
+      border-top: 8px solid #ef4444;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
     }
 
-    .choice {
-      display: block;
-      padding: 10px;
-      margin-top: 9px;
-      border: 1px solid #dbe3ef;
-      border-radius: 7px;
-      background: white;
-      cursor: pointer;
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+      margin-top: 16px;
     }
-
-    .choice input {
-      width: auto;
-      margin: 0 8px 0 0;
-    }
-
-    .correct { border-left-color: #16a34a; background: #f0fdf4; }
-    .incorrect { border-left-color: #dc2626; background: #fef2f2; }
-
-    .correct-answer {
-      border-color: #16a34a;
-      background: #dcfce7;
-      font-weight: bold;
-    }
-
-    .score {
-      padding: 18px;
-      margin-top: 20px;
-      text-align: center;
-      border-radius: 10px;
-      color: #1d4ed8;
-      background: #eff6ff;
-      font-size: 20px;
-      font-weight: bold;
-    }
-
-    .calculator {
-      display: none;
-      margin: 18px 0;
-      padding: 15px;
-      border: 1px solid #cbd5e1;
-      border-radius: 10px;
-      background: #f8fafc;
-    }
-
-    .calculator.active { display: block; }
-
-    .calc-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-    }
-
-    .calc-grid button {
-      width: auto;
-      margin: 0;
-      background: #e2e8f0;
-      color: #1f2937;
-    }
-
-    .calc-grid .equal { background: #16a34a; color: white; }
-
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 15px;
       font-size: 14px;
     }
-
     th, td {
-      padding: 8px;
-      border-bottom: 1px solid #e2e8f0;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
       text-align: left;
     }
+    th { background: #f8fafc; font-weight: 600; color: #475569; }
 
-    th { background: #eff6ff; }
+    .link-btn {
+      background: none;
+      border: none;
+      color: var(--primary);
+      padding: 0;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: underline;
+      display: inline;
+      width: auto;
+    }
+
+    .score-banner {
+      padding: 24px;
+      border-radius: 12px;
+      background: #eff6ff;
+      border: 2px solid #bfdbfe;
+      text-align: center;
+      margin: 20px 0;
+    }
   </style>
 </head>
 
 <body>
-  <div class="banner">
-    <span>💡 <b>โหมดจำลอง (Local Mock Mode):</b> ทดสอบฟังก์ชันใหม่: นาฬิกานับถอยหลัง, ตรวจจับสลับหน้าจอ, ป้องกันสอบซ้ำ</span>
-    <button class="small secondary" onclick="resetLocalData()" style="font-size: 11px;">ล้างข้อมูลทดสอบ</button>
+  <div class="preview-banner">
+    <span>💡 <b>โหมดจำลองในเครื่อง (Local Preview):</b> รองรับวิชา ม.ปลาย (ชีวะ เคมี ฟิสิกส์), ลืมรหัสผ่านด้วยคำถามกันลืม+PIN, นาฬิกาลอยตามจอ, รีเซ็ตข้อสอบเมื่อสลับหน้าจอ</span>
+    <button class="btn-outline btn-small" onclick="resetMockData()" style="padding: 4px 8px; font-size: 11px;">ล้างข้อมูลทดสอบ</button>
   </div>
 
-  <!-- Home View -->
-  <div id="homeView" class="view active">
-    <div class="card">
-      <h1>ระบบทำข้อสอบวิทยาศาสตร์</h1>
-      <p>กรุณาเลือกประเภทผู้ใช้งาน</p>
+  <div class="container">
 
-      <div class="role-buttons">
-        <button onclick="showView('teacherLoginView')">เข้าสู่ระบบครู</button>
-        <button onclick="showView('studentCodeView')">เข้าสู่ระบบนักเรียน</button>
-        <button onclick="showView('registerTeacherView')">สมัครบัญชีครู</button>
-      </div>
-    </div>
-  </div>
+    <!-- 1. HOME VIEW -->
+    <div id="homeView" class="view active">
+      <div class="card" style="text-align: center; padding: 48px 24px;">
+        <div style="font-size: 48px; margin-bottom: 8px;">🔬 🧬 🧪 ⚡</div>
+        <h1 style="margin-bottom: 6px;">ระบบทำข้อสอบวิทยาศาสตร์ ม.ปลาย</h1>
+        <p style="margin-top: 0; font-size: 16px;">คลังข้อสอบฟิสิกส์ เคมี ชีววิทยา พร้อมระบบป้องกันการทุจริตและการจับเวลาออนไลน์</p>
 
-  <!-- Teacher Login View -->
-  <div id="teacherLoginView" class="view">
-    <div class="card">
-      <h1>เข้าสู่ระบบครู</h1>
-      <div id="teacherLoginError" class="error"></div>
+        <div class="role-grid">
+          <div class="role-card" onclick="showView('teacherLoginView')">
+            <span class="role-icon">👨‍🏫</span>
+            <h2 style="font-size: 18px; margin-bottom: 4px;">เข้าสู่ระบบครู</h2>
+            <p style="margin: 0; font-size: 13px;">จัดการห้องสอบ ดูคะแนน และสถิติวิเคราะห์</p>
+          </div>
 
-      <label>ชื่อผู้ใช้</label>
-      <input id="teacherUsername" placeholder="เช่น teacher1">
-
-      <label>รหัสผ่าน</label>
-      <input id="teacherPassword" type="password" placeholder="เช่น password123">
-
-      <button onclick="teacherLogin()">เข้าสู่ระบบ</button>
-      <button class="secondary" onclick="showView('homeView')">กลับ</button>
-    </div>
-  </div>
-
-  <!-- Register Teacher View -->
-  <div id="registerTeacherView" class="view">
-    <div class="card">
-      <h1>สมัครบัญชีครู</h1>
-      <div id="registerTeacherError" class="error"></div>
-
-      <label>ชื่อ-นามสกุล</label>
-      <input id="registerName" placeholder="เช่น ครูวรพล ใจดี">
-
-      <label>ชื่อผู้ใช้</label>
-      <input id="registerUsername" placeholder="เช่น worapop">
-
-      <label>รหัสผ่าน</label>
-      <input id="registerPassword" type="password" placeholder="อย่างน้อย 6 ตัวอักษร">
-
-      <label>ยืนยันรหัสผ่าน</label>
-      <input id="registerConfirmPassword" type="password">
-
-      <button onclick="registerTeacher()">สมัครบัญชีครู</button>
-      <button class="secondary" onclick="showView('homeView')">กลับ</button>
-    </div>
-  </div>
-
-  <!-- Student Code View -->
-  <div id="studentCodeView" class="view">
-    <div class="card">
-      <h1>เข้าสู่ห้องสอบ</h1>
-      <div id="studentCodeError" class="error"></div>
-
-      <label>รหัสห้องสอบ</label>
-      <input id="roomCode" placeholder="เช่น SCI-SAMPLE1">
-
-      <button onclick="checkRoomCode()">ยืนยันรหัสห้อง</button>
-      <button class="secondary" onclick="showView('homeView')">กลับ</button>
-    </div>
-  </div>
-
-  <!-- Student Profile View -->
-  <div id="studentProfileView" class="view">
-    <div class="card">
-      <h1>ยืนยันข้อมูลนักเรียน</h1>
-      <div id="profileError" class="error"></div>
-      <div id="roomSummary"></div>
-
-      <label>ชื่อ-นามสกุล</label>
-      <input id="studentName" placeholder="เช่น ด.ช. สมชาย หมายปอง">
-
-      <label>ชั้น / ห้อง</label>
-      <input id="studentClass" placeholder="เช่น ม.2/1">
-
-      <label>เลขที่</label>
-      <input id="studentNumber" type="number" min="1" placeholder="เช่น 1">
-
-      <button onclick="startExam()">ยืนยันและเริ่มทำข้อสอบ</button>
-      <button class="secondary" onclick="showView('studentCodeView')">กลับ</button>
-    </div>
-  </div>
-
-  <!-- Student Exam View -->
-  <div id="studentExamView" class="view">
-    <div class="card">
-      <div class="topbar">
-        <span id="studentInfo"></span>
-        <button class="secondary" onclick="goHome()">ออกจากห้อง</button>
-      </div>
-
-      <!-- Countdown Timer Component -->
-      <div id="timerContainer" class="timer-container" style="display: none;">
-        <div class="timer-header">
-          <span>⏳ เวลาที่เหลือ:</span>
-          <span id="timerText" class="timer-text">--:--</span>
+          <div class="role-card" onclick="showView('studentCodeView')">
+            <span class="role-icon">🧑‍🎓</span>
+            <h2 style="font-size: 18px; margin-bottom: 4px;">เข้าสอบ (นักเรียน)</h2>
+            <p style="margin: 0; font-size: 13px;">กรอกรหัสห้องเพื่อเริ่มทำข้อสอบ</p>
+          </div>
         </div>
-        <div class="timer-progress">
-          <div id="timerProgressFill" class="timer-progress-fill"></div>
+
+        <div style="margin-top: 24px;">
+          <button class="btn-outline btn-small" onclick="showView('registerTeacherView')">
+            ➕ สมัครบัญชีครูผู้สอนใหม่
+          </button>
         </div>
       </div>
+    </div>
 
-      <div id="studentError" class="error"></div>
+    <!-- 2. TEACHER LOGIN VIEW -->
+    <div id="teacherLoginView" class="view">
+      <div class="card" style="max-width: 440px; margin: 0 auto;">
+        <h2>🔐 เข้าสู่ระบบครูผู้สอน</h2>
+        <p>ทดสอบล็อกอินด้วย: <code>teacher1</code> / <code>password123</code></p>
+        <div id="teacherLoginError" class="error-box"></div>
 
-      <div id="calculator" class="calculator">
-        <b>เครื่องคิดเลข</b>
-        <input id="calcDisplay" readonly placeholder="0">
+        <label>ชื่อผู้ใช้ (Username)</label>
+        <input id="teacherUsername" placeholder="เช่น teacher1">
 
-        <div class="calc-grid">
-          <button onclick="calc('C')">C</button>
-          <button onclick="calc('back')">⌫</button>
-          <button onclick="calc('(')">(</button>
-          <button onclick="calc(')')">)</button>
+        <label>รหัสผ่าน (Password)</label>
+        <input id="teacherPassword" type="password" placeholder="••••••••">
 
-          <button onclick="calc('7')">7</button>
-          <button onclick="calc('8')">8</button>
-          <button onclick="calc('9')">9</button>
-          <button onclick="calc('/')">÷</button>
+        <div style="display: flex; justify-content: flex-end; margin-bottom: 14px;">
+          <button class="link-btn" type="button" onclick="showView('forgotPasswordView')">ลืมรหัสผ่าน?</button>
+        </div>
 
-          <button onclick="calc('4')">4</button>
-          <button onclick="calc('5')">5</button>
-          <button onclick="calc('6')">6</button>
-          <button onclick="calc('*')">×</button>
+        <button onclick="teacherLogin()">เข้าสู่ระบบ</button>
+        <button class="btn-secondary" onclick="showView('homeView')">กลับหน้าหลัก</button>
+      </div>
+    </div>
 
-          <button onclick="calc('1')">1</button>
-          <button onclick="calc('2')">2</button>
-          <button onclick="calc('3')">3</button>
-          <button onclick="calc('-')">−</button>
+    <!-- 3. FORGOT PASSWORD VIEW -->
+    <div id="forgotPasswordView" class="view">
+      <div class="card" style="max-width: 480px; margin: 0 auto;">
+        <h2>🔑 กู้คืนรหัสผ่านครู</h2>
+        <p>ยืนยันตัวตนด้วยคำถามกันลืมและรหัส PIN 4 หลักที่คุณตั้งไว้ตอนสมัคร</p>
+        <div id="forgotError" class="error-box"></div>
 
-          <button onclick="calc('0')">0</button>
-          <button onclick="calc('.')">.</button>
-          <button class="equal" onclick="calc('=')">=</button>
-          <button onclick="calc('+')">+</button>
+        <div id="forgotStep1">
+          <label>ชื่อผู้ใช้ (Username)</label>
+          <input id="forgotUsername" placeholder="ระบุชื่อผู้ใช้ เช่น teacher1">
+          <button onclick="fetchSecurityQuestion()">ค้นหาบัญชี</button>
+        </div>
+
+        <div id="forgotStep2" style="display: none;">
+          <div style="background: #f1f5f9; padding: 12px; border-radius: 8px; margin-bottom: 14px;">
+            <span style="font-size: 13px; color: #475569;">คำถามกันลืมของคุณ:</span>
+            <div id="displaySecurityQuestion" style="font-weight: 600; color: #0f172a; margin-top: 4px;"></div>
+          </div>
+
+          <label>คำตอบสำหรับคำถามกันลืม</label>
+          <input id="forgotSecurityAnswer" placeholder="กรอกคำตอบ (บัญชีทดสอบตอบ: มอมแมม)">
+
+          <label>รหัส PIN กู้คืน (ตัวเลข 4 หลัก)</label>
+          <input id="forgotRecoveryPin" type="password" maxlength="4" placeholder="บัญชีทดสอบคือ 1234">
+
+          <label>รหัสผ่านใหม่ (อย่างน้อย 6 ตัวอักษร)</label>
+          <input id="forgotNewPassword" type="password" placeholder="ตั้งรหัสผ่านใหม่">
+
+          <label>ยืนยันรหัสผ่านใหม่</label>
+          <input id="forgotConfirmPassword" type="password" placeholder="พิมพ์รหัสผ่านใหม่อีกครั้ง">
+
+          <button onclick="submitResetPassword()">ยืนยันการตั้งรหัสผ่านใหม่</button>
+        </div>
+
+        <button class="btn-secondary" onclick="showView('teacherLoginView')">กลับไปหน้าเข้าสู่ระบบ</button>
+      </div>
+    </div>
+
+    <!-- 4. REGISTER TEACHER VIEW -->
+    <div id="registerTeacherView" class="view">
+      <div class="card" style="max-width: 520px; margin: 0 auto;">
+        <h2>📝 สมัครบัญชีครูผู้สอน</h2>
+        <p>สร้างบัญชีเพื่อจัดสร้างห้องสอบและบันทึกคะแนนนักเรียน</p>
+        <div id="registerError" class="error-box"></div>
+
+        <label>ชื่อ-นามสกุล</label>
+        <input id="regFullName" placeholder="เช่น ครูวรพล ใจดี">
+
+        <label>ชื่อผู้ใช้ (Username ภาษาอังกฤษ)</label>
+        <input id="regUsername" placeholder="เช่น worapop">
+
+        <label>รหัสผ่าน (อย่างน้อย 6 ตัวอักษร)</label>
+        <input id="regPassword" type="password" placeholder="••••••••">
+
+        <label>ยืนยันรหัสผ่าน</label>
+        <input id="regConfirmPassword" type="password" placeholder="••••••••">
+
+        <div style="border-top: 1px solid var(--border); padding-top: 14px; margin-top: 8px;">
+          <b style="font-size: 14px; color: var(--primary);">🔒 ข้อมูลสำหรับกู้คืนรหัสผ่าน (ใช้เมื่อลืมรหัสผ่าน)</b>
+          <p style="font-size: 13px; margin: 4px 0 12px;">ไม่จำเป็นต้องใช้อีเมลจริง ปลอดภัยและไม่ละเมิดความเป็นส่วนตัว</p>
+
+          <label>PIN กู้คืน 4 หลัก (จดจำไว้ให้ดี)</label>
+          <input id="regRecoveryPin" type="password" maxlength="4" placeholder="เช่น 1234">
+
+          <label>เลือกคำถามกันลืม 1 ข้อ</label>
+          <select id="regSecurityQuestion">
+            <option value="สัตว์เลี้ยงตัวแรกของคุณชื่ออะไร?">สัตว์เลี้ยงตัวแรกของคุณชื่ออะไร?</option>
+            <option value="โรงเรียนประถมของคุณชื่ออะไร?">โรงเรียนประถมของคุณชื่ออะไร?</option>
+            <option value="อาหารที่คุณชอบรับประทานที่สุดคืออะไร?">อาหารที่คุณชอบรับประทานที่สุดคืออะไร?</option>
+            <option value="ชื่อเล่นของมารดาหรือบิดาคืออะไร?">ชื่อเล่นของมารดาหรือบิดาคืออะไร?</option>
+            <option value="สถานที่ท่องเที่ยวที่คุณประทับใจที่สุดคือที่ไหน?">สถานที่ท่องเที่ยวที่คุณประทับใจที่สุดคือที่ไหน?</option>
+          </select>
+
+          <label>คำตอบสำหรับคำถามกันลืม</label>
+          <input id="regSecurityAnswer" placeholder="กรอกคำตอบ (จำไว้สำหรับกู้รหัสผ่าน)">
+        </div>
+
+        <button onclick="registerTeacher()">ยืนยันการสมัครบัญชี</button>
+        <button class="btn-secondary" onclick="showView('homeView')">กลับหน้าหลัก</button>
+      </div>
+    </div>
+
+    <!-- 5. TEACHER DASHBOARD VIEW -->
+    <div id="teacherDashboardView" class="view">
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <div>
+            <h1 style="margin: 0; font-size: 22px;">📊 แดชบอร์ดครูผู้สอน</h1>
+            <span id="teacherBadge" style="font-size: 14px; color: var(--text-muted);"></span>
+          </div>
+          <button class="btn-secondary btn-small" onclick="goHome()">ออกจากระบบ</button>
+        </div>
+
+        <div style="background: #f8fafc; border: 1.5px solid var(--border); border-radius: 12px; padding: 22px; margin-bottom: 26px;">
+          <h2 style="margin-bottom: 12px; font-size: 18px;">➕ สร้างห้องสอบวิทยาศาสตร์ ม.ปลาย</h2>
+          <div id="createRoomError" class="error-box"></div>
+
+          <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 14px;">
+            <div>
+              <label>ชื่อห้องสอบ</label>
+              <input id="newRoomName" placeholder="เช่น สอบเก็บคะแนน เรื่องการแบ่งเซลล์">
+            </div>
+            <div>
+              <label>หมวดวิชา ม.ปลาย</label>
+              <select id="newRoomSubject">
+                <option value="biology">🧬 ชีววิทยา (Biology)</option>
+                <option value="chemistry">🧪 เคมี (Chemistry)</option>
+                <option value="physics">⚡ ฟิสิกส์ (Physics)</option>
+                <option value="general">🔬 วิทยาศาสตร์ทั่วไป</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+            <div>
+              <label>ระดับชั้น / ห้อง</label>
+              <input id="newRoomClass" placeholder="เช่น ม.4/1 หรือ ม.5/2">
+            </div>
+            <div>
+              <label>เวลาในการทำข้อสอบ (นาที)</label>
+              <input id="newRoomTimeLimit" type="number" min="0" value="5" placeholder="0 = ไม่จำกัดเวลา">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+            <div>
+              <label>ข้อง่าย (ข้อ)</label>
+              <input id="easyCount" type="number" min="0" value="2">
+            </div>
+            <div>
+              <label>ข้อปานกลาง (ข้อ)</label>
+              <input id="mediumCount" type="number" min="0" value="2">
+            </div>
+            <div>
+              <label>ข้อยาก (ข้อ)</label>
+              <input id="hardCount" type="number" min="0" value="1">
+            </div>
+          </div>
+
+          <button onclick="createRoom()">สร้างห้องสอบและรับรหัส</button>
+          <div id="newRoomCodeBox"></div>
+        </div>
+
+        <h2>📋 ห้องสอบของคุณที่เปิดอยู่ (เฉพาะบัญชีของคุณ)</h2>
+        <div id="roomList"></div>
+
+        <div id="roomResultsSection" style="margin-top: 30px;"></div>
+      </div>
+    </div>
+
+    <!-- 6. STUDENT ROOM CODE VIEW -->
+    <div id="studentCodeView" class="view">
+      <div class="card" style="max-width: 440px; margin: 0 auto; text-align: center;">
+        <span style="font-size: 40px; display: block; margin-bottom: 10px;">🚪</span>
+        <h2>เข้าสู่ห้องสอบ</h2>
+        <p>กรุณากรอกรหัสห้องสอบ (รหัสตัวอย่าง: <code>BIO-TEST1</code>)</p>
+        <div id="studentCodeError" class="error-box"></div>
+
+        <input id="roomCodeInput" style="text-align: center; font-size: 20px; font-weight: bold; letter-spacing: 2px;" placeholder="เช่น BIO-TEST1">
+        <button onclick="checkRoomCode()">ยืนยันรหัสห้องสอบ</button>
+        <button class="btn-secondary" onclick="showView('homeView')">กลับหน้าหลัก</button>
+      </div>
+    </div>
+
+    <!-- 7. STUDENT PROFILE VIEW -->
+    <div id="studentProfileView" class="view">
+      <div class="card" style="max-width: 480px; margin: 0 auto;">
+        <h2>👤 ข้อมูลผู้เข้าสอบ</h2>
+        <div id="roomSummaryBox" style="background: #eff6ff; padding: 16px; border-radius: 10px; margin-bottom: 18px;"></div>
+        <div id="profileError" class="error-box"></div>
+
+        <label>ชื่อ-นามสกุล นักเรียน</label>
+        <input id="stuName" placeholder="เช่น นายวชิระ สุขใจ">
+
+        <label>ชั้น / ห้อง</label>
+        <input id="stuClass" placeholder="เช่น ม.4/1">
+
+        <label>เลขที่</label>
+        <input id="stuNumber" type="number" min="1" placeholder="เช่น 15">
+
+        <button onclick="startExam()">ยืนยันข้อมูลและเริ่มทำข้อสอบ</button>
+        <button class="btn-secondary" onclick="showView('studentCodeView')">ย้อนกลับ</button>
+      </div>
+    </div>
+
+    <!-- 8. STUDENT EXAM VIEW -->
+    <div id="studentExamView" class="view">
+      
+      <!-- ⏱️ STICKY FLOATING HEADER -->
+      <div id="stickyTimerBar" class="sticky-timer-bar" style="display: none;">
+        <div class="sticky-content">
+          <div>
+            <span id="floatingStuInfo" style="font-weight: 600; font-size: 14px; color: #1e293b;"></span>
+            <span id="floatingSubjectBadge"></span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div id="timerDisplay" class="timer-badge">--:--</div>
+            <button class="btn-small btn-outline" onclick="toggleCalculator()" title="เครื่องคิดเลข" style="padding: 6px 10px; font-size: 16px;">🧮</button>
+          </div>
+        </div>
+        <div class="progress-track">
+          <div id="progressFill" class="progress-fill"></div>
         </div>
       </div>
 
-      <div id="examContent"></div>
-      <div id="score"></div>
-    </div>
-  </div>
+      <div class="container exam-body">
+        <div class="card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <h1 id="examTitle" style="margin: 0; font-size: 22px;"></h1>
+            <button class="btn-secondary btn-small" onclick="goHome()">ออกจากห้อง</button>
+          </div>
 
-  <!-- Anti-Cheat Modal -->
-  <div id="antiCheatModal" class="modal-overlay">
-    <div class="modal-box">
-      <h2>⚠️ คำเตือนการทุจริต</h2>
-      <p id="antiCheatMessage">ระบบตรวจพบว่าคุณสลับหน้าจอ ออกจากแท็บ หรือเปิดแอปพลิเคชันอื่น</p>
-      <p style="color: #64748b; font-size: 14px;">ระบบได้บันทึกพฤติกรรมนี้ และจะรายงานจำนวนครั้งต่อครูผู้สอน</p>
-      <button class="danger" onclick="closeAntiCheatModal()">รับทราบ และกลับไปทำข้อสอบ</button>
-    </div>
-  </div>
-
-  <!-- Teacher Dashboard View -->
-  <div id="teacherDashboardView" class="view">
-    <div class="card">
-      <div class="topbar">
-        <span id="teacherInfo"></span>
-        <button class="secondary" onclick="goHome()">ออกจากระบบ</button>
+          <div id="examError" class="error-box"></div>
+          <div id="examQuestionsContent"></div>
+          <div id="scoreDisplay"></div>
+        </div>
       </div>
+    </div>
 
-      <h1>สร้างห้องสอบวิทยาศาสตร์</h1>
-      <div id="teacherError" class="error"></div>
+  </div> <!-- /container -->
 
-      <label>ชื่อห้องสอบ</label>
-      <input id="newRoomName" placeholder="เช่น วิทยาศาสตร์ ม.2/1 ครั้งที่ 1">
-
-      <label>ชั้น / ห้อง</label>
-      <input id="newRoomClass" placeholder="เช่น ม.2/1">
-
-      <label>เวลาในการทำข้อสอบ (นาที)</label>
-      <input id="newRoomTimeLimit" type="number" min="0" value="5" placeholder="ใส่ 0 เพื่อไม่จำกัดเวลา">
-
-      <label>จำนวนข้อง่าย</label>
-      <input id="easyCount" type="number" min="0" value="2">
-
-      <label>จำนวนข้อปานกลาง</label>
-      <input id="mediumCount" type="number" min="0" value="2">
-
-      <label>จำนวนข้อยาก</label>
-      <input id="hardCount" type="number" min="0" value="1">
-
-      <button onclick="createRoom()">สร้างห้องสอบ</button>
-
-      <div id="newRoomCode"></div>
-
-      <h2>ห้องสอบที่เปิดอยู่</h2>
-      <div id="roomList"></div>
-
-      <div id="roomResults"></div>
+  <!-- Floating Calculator Widget -->
+  <div id="calculatorModal" class="calculator-modal">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+      <b style="font-size: 14px;">เครื่องคิดเลขวิทยาศาสตร์</b>
+      <button class="link-btn" onclick="toggleCalculator()" style="font-size: 18px;">✕</button>
+    </div>
+    <input id="calcDisplay" readonly placeholder="0" style="text-align: right; font-size: 18px; margin-bottom: 8px;">
+    <div class="calc-grid">
+      <button onclick="calc('C')">C</button>
+      <button onclick="calc('back')">⌫</button>
+      <button onclick="calc('(')">(</button>
+      <button onclick="calc(')')">)</button>
+      <button onclick="calc('7')">7</button>
+      <button onclick="calc('8')">8</button>
+      <button onclick="calc('9')">9</button>
+      <button onclick="calc('/')">÷</button>
+      <button onclick="calc('4')">4</button>
+      <button onclick="calc('5')">5</button>
+      <button onclick="calc('6')">6</button>
+      <button onclick="calc('*')">×</button>
+      <button onclick="calc('1')">1</button>
+      <button onclick="calc('2')">2</button>
+      <button onclick="calc('3')">3</button>
+      <button onclick="calc('-')">−</button>
+      <button onclick="calc('0')">0</button>
+      <button onclick="calc('.')">.</button>
+      <button class="calc-equal" onclick="calc('=')">=</button>
+      <button onclick="calc('+')">+</button>
     </div>
   </div>
 
-  <!-- Local Mock Script for google.script.run -->
+  <!-- Anti-Cheat Overlay Modal (Triggered on tab switch -> RESETS EXAM) -->
+  <div id="antiCheatOverlay" class="anti-cheat-overlay">
+    <div class="anti-cheat-box">
+      <span style="font-size: 56px; display: block; margin-bottom: 12px;">⚠️</span>
+      <h2 style="color: #dc2626; margin-top: 0;">ตรวจพบการสลับหน้าจอ!</h2>
+      <p style="font-size: 15px; color: #334155;">
+        ระบบตรวจพบว่าคุณสลับแท็บ ย่อเบราว์เซอร์ หรือเปิดแอปพลิเคชันอื่น<br>
+        <b>เพื่อความโปร่งใส ระบบได้ทำการ "รีเซ็ตการทำข้อสอบทั้งหมด"</b>
+      </p>
+      <p style="font-size: 13px; color: #dc2626; background: #fee2e2; padding: 10px; border-radius: 8px;">
+        คำตอบเดิมทั้งหมดถูกล้างแล้ว และคุณจะต้องเริ่มทำข้อสอบใหม่ตั้งแต่ข้อแรก
+      </p>
+      <button class="btn-danger" onclick="confirmResetPenalty()">รับทราบ และเริ่มทำข้อสอบใหม่</button>
+    </div>
+  </div>
+
+  <!-- Local Mock Backend Engine -->
   <script>
-    const SAMPLE_QUESTIONS = [
-      { id: '1', difficulty: 'easy', question: 'หน่วยพื้นฐานที่เล็กที่สุดของสิ่งมีชีวิตคืออะไร?', choices: ['เซลล์ (Cell)', 'เนื้อเยื่อ', 'อวัยวะ', 'ระบบร่างกาย'], correct: 'A' },
-      { id: '2', difficulty: 'easy', question: 'สารใดเป็นตัวทำละลายหลักในร่างกายของมนุษย์?', choices: ['น้ำ', 'ไขมัน', 'โปรตีน', 'กลูโคส'], correct: 'A' },
-      { id: '3', difficulty: 'medium', question: 'กระบวนการสังเคราะห์ด้วยแสงของพืชเกิดขึ้นที่ออร์แกเนลล์ใดเป็นหลัก?', choices: ['คลอโรพลาสต์', 'ไมโทคอนเดรีย', 'ไรโบโซม', 'กอลจิบอดี'], correct: 'A' },
-      { id: '4', difficulty: 'medium', question: 'แรงเสียดทานมีทิศทางอย่างไรกับการเคลื่อนที่ของวัตถุ?', choices: ['ตรงข้ามกับทิศทางการเคลื่อนที่', 'ทิศทางเดียวกับการเคลื่อนที่', 'ตั้งฉากกับการเคลื่อนที่', 'ไม่มีทิศทางแน่นอน'], correct: 'A' },
-      { id: '5', difficulty: 'hard', question: 'ตามกฎการเคลื่อนที่ข้อที่ 2 ของนิวตัน (F = ma) หากมวลคงที่และแรงลัพธ์เพิ่มเป็น 2 เท่า ความเร่งจะเป็นอย่างไร?', choices: ['เพิ่มขึ้นเป็น 2 เท่า', 'ลดลงครึ่งหนึ่ง', 'เท่าเดิม', 'เพิ่มขึ้นเป็น 4 เท่า'], correct: 'A' },
-      { id: '6', difficulty: 'hard', question: 'ธาตุที่มีเลขอะตอม 12 มีการจัดเรียงอิเล็กตรอนอย่างไร?', choices: ['2, 8, 2', '2, 8, 8', '2, 8', '2, 6, 4'], correct: 'A' }
+    const SAMPLE_HIGH_SCHOOL_QUESTIONS = [
+      // Biology
+      { id: 'BIO-101', subject: 'biology', difficulty: 'easy', question: 'ออร์แกเนลล์ใดทำหน้าที่เป็นแหล่งสร้างพลังงาน ATP หลักของเซลล์สิ่งมีชีวิต?', choices: ['ไมโทคอนเดรีย (Mitochondria)', 'ไรโบโซม (Ribosome)', 'กอลจิบอดี (Golgi body)', 'ไลโซโซม (Lysosome)'], correctText: 'ไมโทคอนเดรีย (Mitochondria)' },
+      { id: 'BIO-102', subject: 'biology', difficulty: 'easy', question: 'เบสในกรดนิวคลีอิกชนิดใดที่พบเฉพาะใน RNA แต่ไม่พบใน DNA?', choices: ['ยูราซิล (Uracil)', 'ไทมีน (Thymine)', 'กวานีน (Guanine)', 'ไซโทซีน (Cytosine)'], correctText: 'ยูราซิล (Uracil)' },
+      { id: 'BIO-201', subject: 'biology', difficulty: 'medium', question: 'ระยะใดของการแบ่งเซลล์แบบไมโทซิส (Mitosis) ที่โครโมโซมเรียงตัวตรงกึ่งกลางเซลล์ชัดเจนที่สุด?', choices: ['เมทาเฟส (Metaphase)', 'โพรเฟส (Prophase)', 'แอนาเฟส (Anaphase)', 'เทโลเฟส (Telophase)'], correctText: 'เมทาเฟส (Metaphase)' },
+      { id: 'BIO-202', subject: 'biology', difficulty: 'medium', question: 'ปฏิกิริยาแสง (Light reaction) ในการสังเคราะห์ด้วยแสงเกิดขึ้นที่โครงสร้างใดของคลอโรพลาสต์?', choices: ['ไทลาคอยด์ (Thylakoid)', 'สโตรมา (Stroma)', 'เยื่อหุ้มชั้นนอก', 'คริสตี (Cristae)'], correctText: 'ไทลาคอยด์ (Thylakoid)' },
+      { id: 'BIO-301', subject: 'biology', difficulty: 'hard', question: 'การแบ่งเซลล์แบบไมโอซิส (Meiosis) ปรากฏการณ์ Crossing over เกิดขึ้นในระยะใดอย่างเจาะจง?', choices: ['โพรเฟส I (Prophase I)', 'เมทาเฟส I (Metaphase I)', 'แอนาเฟส II (Anaphase II)', 'โพรเฟส II (Prophase II)'], correctText: 'โพรเฟส I (Prophase I)' },
+      // Chemistry
+      { id: 'CHM-101', subject: 'chemistry', difficulty: 'easy', question: 'พันธะเคมีที่เกิดจากการใช้อิเล็กตรอนร่วมกันระหว่างอะตอมอโลหะกับอโลหะคือพันธะใด?', choices: ['พันธะโคเวเลนต์ (Covalent bond)', 'พันธะไอออนิก (Ionic bond)', 'พันธะโลหะ (Metallic bond)', 'พันธะไฮโดรเจน (Hydrogen bond)'], correctText: 'พันธะโคเวเลนต์ (Covalent bond)' },
+      { id: 'CHM-102', subject: 'chemistry', difficulty: 'easy', question: 'สารละลายที่มีค่า pH = 2 มีสมบัติความเป็นกรด-เบสอย่างไร?', choices: ['กรดแก่', 'เบสแก่', 'กลาง', 'เกลือไฮโดรไลซิส'], correctText: 'กรดแก่' },
+      { id: 'CHM-201', subject: 'chemistry', difficulty: 'medium', question: 'แก๊สชนิดหนึ่งมีปริมาตร 22.4 ลิตร ที่สภาวะมาตรฐาน (STP) จะมีจำนวนอนุภาคกี่โมล?', choices: ['1.0 โมล', '0.5 โมล', '2.0 โมล', '4.0 โมล'], correctText: '1.0 โมล' },
+      { id: 'CHM-202', subject: 'chemistry', difficulty: 'medium', question: 'ธาตุที่มีการจัดเรียงอิเล็กตรอนเป็น 2, 8, 8, 2 อยู่หมู่ใดและคาบใดในตารางธาตุ?', choices: ['หมู่ 2 คาบ 4', 'หมู่ 4 คาบ 2', 'หมู่ 2 คาบ 3', 'หมู่ 8 คาบ 4'], correctText: 'หมู่ 2 คาบ 4' },
+      { id: 'CHM-301', subject: 'chemistry', difficulty: 'hard', question: 'ตามทฤษฎีกรด-เบสของเบรินสเตด-ลาวรี (Brønsted–Lowry) สารที่เป็นคู่เบสของ H2SO4 คือสารใด?', choices: ['HSO4-', 'SO4^2-', 'H3SO4+', 'H3O+'], correctText: 'HSO4-' },
+      // Physics
+      { id: 'PHY-101', subject: 'physics', difficulty: 'easy', question: 'ตามกฎการเคลื่อนที่ข้อที่ 1 ของนิวตัน วัตถุจะรักษาสภาพการเคลื่อนที่คงที่เมื่อใด?', choices: ['เมื่อแรงลัพธ์ที่กระทำต่อวัตถุเป็นศูนย์', 'เมื่อมีความเร่งคงที่', 'เมื่อมวลของวัตถุเป็นศูนย์', 'เมื่อไม่มีแรงโน้มถ่วง'], correctText: 'เมื่อแรงลัพธ์ที่กระทำต่อวัตถุเป็นศูนย์' },
+      { id: 'PHY-102', subject: 'physics', difficulty: 'easy', question: 'หน่วยในระบบเอสไอ (SI Unit) ของปริมาณ "งาน" และ "พลังงาน" คือหน่วยใด?', choices: ['จูล (Joule : J)', 'นิวตัน (Newton : N)', 'วัตต์ (Watt : W)', 'ปาสกาล (Pascal : Pa)'], correctText: 'จูล (Joule : J)' },
+      { id: 'PHY-201', subject: 'physics', difficulty: 'medium', question: 'วัตถุมวล 2 kg เคลื่อนที่ด้วยความเร็ว 10 m/s จะมีพลังงานจลน์ (Ek) เท่าใด?', choices: ['100 จูล', '50 จูล', '200 จูล', '20 จูล'], correctText: '100 จูล' },
+      { id: 'PHY-202', subject: 'physics', difficulty: 'medium', question: 'เมื่อแสงเดินทางจากตัวกลางที่มีดัชนีหักเหน้อย ไปยังตัวกลางที่มีดัชนีหักเหมาก รังสีของแสงจะหักเหอย่างไร?', choices: ['เบนเข้าหาเส้นแนวฉาก (Normal line)', 'เบนออกจากเส้นแนวฉาก', 'สะท้อนกลับหมด 100%', 'เดินทางเป็นเส้นตรงตามเดิม'], correctText: 'เบนเข้าหาเส้นแนวฉาก (Normal line)' },
+      { id: 'PHY-301', subject: 'physics', difficulty: 'hard', question: 'ตามกฎของคูลอมบ์ หากระยะห่างระหว่างจุดประจุไฟฟ้า 2 จุด เพิ่มขึ้นเป็น 3 เท่าของเดิม แรงทางไฟฟ้าจะเปลี่ยนแปลงอย่างไร?', choices: ['ลดลงเหลือ 1/9 เท่าของเดิม', 'ลดลงเหลือ 1/3 เท่าของเดิม', 'เพิ่มขึ้น 3 เท่า', 'เพิ่มขึ้น 9 เท่า'], correctText: 'ลดลงเหลือ 1/9 เท่าของเดิม' }
     ];
 
-    function getStorage(key, defaultVal) {
-      const val = localStorage.getItem(key);
-      return val ? JSON.parse(val) : defaultVal;
+    function getStorage(k, def) {
+      const v = localStorage.getItem(k);
+      return v ? JSON.parse(v) : def;
     }
-    function setStorage(key, val) {
-      localStorage.setItem(key, JSON.stringify(val));
-    }
-
-    // Initialize mock database
-    if (!localStorage.getItem('mock_teachers')) {
-      setStorage('mock_teachers', [{ username: 'teacher1', password: 'password123', fullName: 'ครูสมศรี วิทยาการ' }]);
-    }
-    if (!localStorage.getItem('mock_rooms')) {
-      setStorage('mock_rooms', [{
-        id: 'R-SAMPLE',
-        teacherUser: 'teacher1',
-        code: 'SCI-SAMPLE1',
-        accessCode: 'SCI-SAMPLE1',
-        name: 'วิทยาศาสตร์ ม.2 ทดสอบเก็บคะแนน',
-        classroom: 'ม.2/1',
-        easy: 2,
-        medium: 2,
-        hard: 1,
-        timeLimit: 5,
-        active: true
-      }]);
-    }
-    if (!localStorage.getItem('mock_results')) {
-      setStorage('mock_results', []);
+    function setStorage(k, v) {
+      localStorage.setItem(k, JSON.stringify(v));
     }
 
-    function resetLocalData() {
-      if (confirm('ต้องการล้างข้อมูลทดสอบและรีเซ็ตใหม่ทั้งหมดหรือไม่?')) {
+    if (!localStorage.getItem('m_teachers')) {
+      setStorage('m_teachers', [
+        { username: 'teacher1', password: 'password123', fullName: 'ครูสมศรี วิทยาการ', pin: '1234', question: 'สัตว์เลี้ยงตัวแรกของคุณชื่ออะไร?', answer: 'มอมแมม' }
+      ]);
+    }
+    if (!localStorage.getItem('m_rooms')) {
+      setStorage('m_rooms', [
+        { id: 'R-BIO-DEMO', teacherId: 'teacher1', code: 'BIO-TEST1', accessCode: 'BIO-TEST1', name: 'ชีววิทยา ม.4 การแบ่งเซลล์', subject: 'biology', classroom: 'ม.4/1', easy: 2, medium: 2, hard: 1, timeLimit: 5, active: true }
+      ]);
+    }
+    if (!localStorage.getItem('m_results')) {
+      setStorage('m_results', []);
+    }
+
+    function resetMockData() {
+      if (confirm('ต้องการล้างข้อมูลทดสอบในเครื่องทั้งหมดหรือไม่?')) {
         localStorage.clear();
         location.reload();
       }
     }
 
-    // Mock google.script.run
+    // Mock google.script.run Adapter
     window.google = window.google || {};
     window.google.script = {
       run: {
         _success: null,
         _failure: null,
         withSuccessHandler: function(fn) {
-          const clone = Object.create(this);
-          clone._success = fn;
-          return clone;
+          const c = Object.create(this);
+          c._success = fn;
+          return c;
         },
         withFailureHandler: function(fn) {
-          const clone = Object.create(this);
-          clone._failure = fn;
-          return clone;
+          const c = Object.create(this);
+          c._failure = fn;
+          return c;
         },
-        _dispatch: function(fnName, args) {
+        _call: function(name, args) {
           const that = this;
           setTimeout(() => {
             try {
-              const res = mockBackend[fnName].apply(mockBackend, args);
+              const res = mockEngine[name].apply(mockEngine, args);
               if (that._success) that._success(res);
             } catch (err) {
               if (that._failure) that._failure(err);
               else console.error(err);
             }
-          }, 100);
+          }, 80);
         },
-        teacherLogin: function(u, p) { this._dispatch('teacherLogin', [u, p]); },
-        registerTeacher: function(f, u, p) { this._dispatch('registerTeacher', [f, u, p]); },
-        createRoom: function(t, n, c, e, m, h, tl) { this._dispatch('createRoom', [t, n, c, e, m, h, tl]); },
-        getRooms: function(t) { this._dispatch('getRooms', [t]); },
-        closeRoom: function(t, rId) { this._dispatch('closeRoom', [t, rId]); },
-        getRoomResults: function(t, rId) { this._dispatch('getRoomResults', [t, rId]); },
-        resetStudentResult: function(t, rId) { this._dispatch('resetStudentResult', [t, rId]); },
-        validateRoomCode: function(c) { this._dispatch('validateRoomCode', [c]); },
-        startStudentSession: function(c, n, cl, num) { this._dispatch('startStudentSession', [c, n, cl, num]); },
-        generateStudentExam: function(t) { this._dispatch('generateStudentExam', [t]); },
-        submitStudentExam: function(t, a, sc) { this._dispatch('submitStudentExam', [t, a, sc]); }
+        teacherLogin: function(u, p) { this._call('teacherLogin', [u, p]); },
+        registerTeacher: function(n, u, p, pin, q, a) { this._call('registerTeacher', [n, u, p, pin, q, a]); },
+        getSecurityQuestion: function(u) { this._call('getSecurityQuestion', [u]); },
+        resetPasswordWithSecurity: function(u, pin, a, p) { this._call('resetPasswordWithSecurity', [u, pin, a, p]); },
+        createRoom: function(t, n, sub, c, e, m, h, tl) { this._call('createRoom', [t, n, sub, c, e, m, h, tl]); },
+        getRooms: function(t) { this._call('getRooms', [t]); },
+        closeRoom: function(t, rId) { this._call('closeRoom', [t, rId]); },
+        getRoomResults: function(t, rId) { this._call('getRoomResults', [t, rId]); },
+        resetStudentResult: function(t, rId) { this._call('resetStudentResult', [t, rId]); },
+        validateRoomCode: function(c) { this._call('validateRoomCode', [c]); },
+        startStudentSession: function(c, n, cl, num) { this._call('startStudentSession', [c, n, cl, num]); },
+        generateStudentExam: function(t) { this._call('generateStudentExam', [t]); },
+        submitStudentExam: function(t, a, sc) { this._call('submitStudentExam', [t, a, sc]); }
       }
     };
 
-    const mockBackend = {
-      teacherLogin: (username, password) => {
-        const teachers = getStorage('mock_teachers', []);
-        const user = teachers.find(t => t.username.toLowerCase() === username.trim().toLowerCase() && t.password === password);
-        if (!user) throw new Error('ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง');
-        return { token: 'T-' + user.username, fullName: user.fullName };
+    const mockEngine = {
+      teacherLogin: (u, p) => {
+        const teachers = getStorage('m_teachers', []);
+        const t = teachers.find(x => x.username.toLowerCase() === u.trim().toLowerCase() && x.password === p);
+        if (!t) throw new Error('ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง');
+        return { token: t.username, fullName: t.fullName };
       },
-      registerTeacher: (fullName, username, password) => {
-        const teachers = getStorage('mock_teachers', []);
-        if (!fullName || !username || !password) throw new Error('กรุณากรอกข้อมูลให้ครบทุกช่อง');
-        if (teachers.some(t => t.username.toLowerCase() === username.trim().toLowerCase())) {
-          throw new Error('ชื่อผู้ใช้นี้มีอยู่แล้ว');
-        }
-        teachers.push({ fullName, username, password });
-        setStorage('mock_teachers', teachers);
-        return 'สมัครบัญชีสำเร็จ สามารถเข้าสู่ระบบได้ทันที';
+      registerTeacher: (name, u, p, pin, q, a) => {
+        const teachers = getStorage('m_teachers', []);
+        if (!name || !u || !p || !pin || !q || !a) throw new Error('กรุณากรอกข้อมูลให้ครบทุกช่อง');
+        if (teachers.some(x => x.username.toLowerCase() === u.trim().toLowerCase())) throw new Error('ชื่อผู้ใช้นี้มีอยู่แล้ว');
+        teachers.push({ username: u, password: p, fullName: name, pin: pin, question: q, answer: a.trim().toLowerCase() });
+        setStorage('m_teachers', teachers);
+        return 'สมัครบัญชีครูสำเร็จ! กรุณาเข้าสู่ระบบ';
       },
-      createRoom: (token, name, classroom, easy, medium, hard, timeLimit) => {
-        const rooms = getStorage('mock_rooms', []);
-        const code = 'SCI-' + Math.random().toString(36).substring(2, 8).toUpperCase();
-        const room = {
+      getSecurityQuestion: (u) => {
+        const teachers = getStorage('m_teachers', []);
+        const t = teachers.find(x => x.username.toLowerCase() === u.trim().toLowerCase());
+        if (!t) throw new Error('ไม่พบบัญชีผู้ใช้นี้ในระบบ');
+        return { question: t.question };
+      },
+      resetPasswordWithSecurity: (u, pin, a, p) => {
+        const teachers = getStorage('m_teachers', []);
+        const t = teachers.find(x => x.username.toLowerCase() === u.trim().toLowerCase());
+        if (!t) throw new Error('ไม่พบบัญชีผู้ใช้นี้');
+        if (t.pin !== pin) throw new Error('รหัส PIN กู้คืน 4 หลักไม่ถูกต้อง');
+        if (t.answer !== a.trim().toLowerCase()) throw new Error('คำตอบสำหรับคำถามกันลืมไม่ถูกต้อง');
+        t.password = p;
+        setStorage('m_teachers', teachers);
+        return 'ตั้งรหัสผ่านใหม่สำเร็จ! กรุณาเข้าสู่ระบบ';
+      },
+      createRoom: (token, name, sub, cl, e, m, h, tl) => {
+        const rooms = getStorage('m_rooms', []);
+        let prefix = 'BIO-';
+        if (sub === 'chemistry') prefix = 'CHM-';
+        else if (sub === 'physics') prefix = 'PHY-';
+        else if (sub === 'general') prefix = 'SCI-';
+
+        const code = prefix + Math.random().toString(36).substring(2, 7).toUpperCase();
+        const r = {
           id: 'R-' + Date.now(),
-          teacherUser: token,
+          teacherId: token,
           code: code,
           accessCode: code,
-          name: name || 'วิทยาศาสตร์',
-          classroom: classroom || 'ม.2',
-          easy: parseInt(easy) || 0,
-          medium: parseInt(medium) || 0,
-          hard: parseInt(hard) || 0,
-          timeLimit: parseInt(timeLimit) >= 0 ? parseInt(timeLimit) : 15,
+          name: name || 'วิทยาศาสตร์ ม.ปลาย',
+          subject: sub || 'general',
+          classroom: cl || 'ม.4/1',
+          easy: parseInt(e) || 0,
+          medium: parseInt(m) || 0,
+          hard: parseInt(h) || 0,
+          timeLimit: parseInt(tl) >= 0 ? parseInt(tl) : 15,
           active: true
         };
-        rooms.push(room);
-        setStorage('mock_rooms', rooms);
-        return room;
+        rooms.push(r);
+        setStorage('m_rooms', rooms);
+        return r;
       },
       getRooms: (token) => {
-        const rooms = getStorage('mock_rooms', []);
-        return rooms.filter(r => r.active);
+        // Strict Teacher Isolation
+        const rooms = getStorage('m_rooms', []);
+        return rooms.filter(r => r.teacherId === token && r.active);
       },
-      closeRoom: (token, roomId) => {
-        const rooms = getStorage('mock_rooms', []);
-        const r = rooms.find(x => x.id === roomId);
+      closeRoom: (token, rId) => {
+        const rooms = getStorage('m_rooms', []);
+        const r = rooms.find(x => x.id === rId && x.teacherId === token);
         if (r) r.active = false;
-        setStorage('mock_rooms', rooms);
+        setStorage('m_rooms', rooms);
         return true;
       },
-      getRoomResults: (token, roomId) => {
-        const results = getStorage('mock_results', []);
-        return results.filter(r => r.roomId === roomId);
+      getRoomResults: (token, rId) => {
+        const rooms = getStorage('m_rooms', []);
+        const isOwner = rooms.some(x => x.id === rId && x.teacherId === token);
+        if (!isOwner) throw new Error('คุณไม่มีสิทธิ์เข้าถึงผลคะแนนห้องนี้');
+
+        const results = getStorage('m_results', []);
+        return results.filter(x => x.roomId === rId);
       },
-      resetStudentResult: (token, resultId) => {
-        let results = getStorage('mock_results', []);
-        results = results.filter(r => r.id !== resultId);
-        setStorage('mock_results', results);
+      resetStudentResult: (token, resId) => {
+        let results = getStorage('m_results', []);
+        results = results.filter(x => x.id !== resId);
+        setStorage('m_results', results);
         return 'ลบผลสอบเรียบร้อยแล้ว นักเรียนสามารถเข้าสอบใหม่ได้';
       },
-      validateRoomCode: (code) => {
-        const rooms = getStorage('mock_rooms', []);
-        const r = rooms.find(x => x.code.toUpperCase() === code.trim().toUpperCase() && x.active);
+      validateRoomCode: (c) => {
+        const rooms = getStorage('m_rooms', []);
+        const r = rooms.find(x => x.code.toUpperCase() === c.trim().toUpperCase() && x.active);
         if (!r) throw new Error('ไม่พบรหัสห้องสอบนี้ หรือห้องสอบถูกปิดไปแล้ว');
         return r;
       },
-      startStudentSession: (code, name, classroom, number) => {
-        const r = mockBackend.validateRoomCode(code);
-        const results = getStorage('mock_results', []);
-        
-        // Single Submission Check
-        const alreadySubmitted = results.some(res => 
-          res.roomId === r.id && 
-          String(res.classroom).trim().toLowerCase() === String(classroom).trim().toLowerCase() && 
-          String(res.number).trim() === String(number).trim()
-        );
-
-        if (alreadySubmitted) {
-          throw new Error(`นักเรียนเลขที่ ${number} ชั้น ${classroom} ได้ส่งข้อสอบในห้องนี้ไปแล้ว ไม่สามารถเข้าสอบซ้ำได้ (หากต้องการสอบใหม่กรุณาติดต่อครูผู้สอน)`);
-        }
-
-        return {
-          token: 'STU-' + Date.now(),
-          room: r
-        };
+      startStudentSession: (c, name, cl, num) => {
+        const r = mockEngine.validateRoomCode(c);
+        const results = getStorage('m_results', []);
+        const dup = results.some(x => x.roomId === r.id && x.classroom.trim().toLowerCase() === cl.trim().toLowerCase() && String(x.number).trim() === String(num).trim());
+        if (dup) throw new Error(`นักเรียนเลขที่ ${num} ชั้น ${cl} ได้ส่งข้อสอบในห้องนี้ไปแล้ว ไม่สามารถเข้าสอบซ้ำได้`);
+        return { token: 'STU-' + Date.now(), room: r };
       },
       generateStudentExam: (token) => {
-        const room = state.room;
-        const easy = SAMPLE_QUESTIONS.filter(q => q.difficulty === 'easy').slice(0, room.easy);
-        const medium = SAMPLE_QUESTIONS.filter(q => q.difficulty === 'medium').slice(0, room.medium);
-        const hard = SAMPLE_QUESTIONS.filter(q => q.difficulty === 'hard').slice(0, room.hard);
-        const questions = [...easy, ...medium, ...hard].map(q => ({
-          id: q.id,
-          question: q.question,
-          choices: q.choices
-        }));
-        return { room, questions };
+        const r = state.room;
+        let pool = SAMPLE_HIGH_SCHOOL_QUESTIONS;
+        if (r.subject && r.subject !== 'general') {
+          pool = pool.filter(q => q.subject === r.subject);
+        }
+
+        const easy = pool.filter(q => q.difficulty === 'easy').sort(() => 0.5 - Math.random()).slice(0, r.easy);
+        const med = pool.filter(q => q.difficulty === 'medium').sort(() => 0.5 - Math.random()).slice(0, r.medium);
+        const hard = pool.filter(q => q.difficulty === 'hard').sort(() => 0.5 - Math.random()).slice(0, r.hard);
+
+        const examQuestions = [...easy, ...med, ...hard].sort(() => 0.5 - Math.random()).map(q => {
+          // Choice Shuffling
+          const shuffledChoices = [...q.choices].sort(() => 0.5 - Math.random());
+          return {
+            id: q.id,
+            question: q.question,
+            subject: q.subject,
+            difficulty: q.difficulty,
+            choices: shuffledChoices
+          };
+        });
+
+        return { room: r, questions: examQuestions };
       },
-      submitStudentExam: (token, answers, switchCount) => {
+      submitStudentExam: (token, answers, sc) => {
         let correct = 0;
         const results = answers.map(a => {
-          const q = SAMPLE_QUESTIONS.find(x => x.id === a.id);
-          const isCorrect = q && q.correct === a.selected;
+          const q = SAMPLE_HIGH_SCHOOL_QUESTIONS.find(x => x.id === a.id);
+          const isCorrect = q && q.correctText.trim() === (a.selectedText || '').trim();
           if (isCorrect) correct++;
-          return { id: a.id, isCorrect, correctAnswer: q ? q.correct : 'A' };
+          return {
+            id: a.id,
+            isCorrect: isCorrect,
+            correctText: q ? q.correctText : ''
+          };
         });
+
         const total = answers.length;
-        const percentage = total > 0 ? Math.round((correct / total) * 100) : 0;
-        const allRes = getStorage('mock_results', []);
-        
+        const pct = total > 0 ? Math.round((correct / total) * 100) : 0;
+        const allRes = getStorage('m_results', []);
+
         allRes.push({
           id: 'RES-' + Date.now(),
           roomId: state.room.id,
           time: new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }),
-          name: document.getElementById('studentName').value,
-          classroom: document.getElementById('studentClass').value,
-          number: document.getElementById('studentNumber').value,
+          name: document.getElementById('stuName').value,
+          classroom: document.getElementById('stuClass').value,
+          number: document.getElementById('stuNumber').value,
           correct: correct,
           total: total,
-          percentage: percentage,
-          switchCount: parseInt(switchCount) || 0
+          percentage: pct,
+          switchCount: parseInt(sc) || 0
         });
-        setStorage('mock_results', allRes);
-        return { correct, total, percentage, switchCount: parseInt(switchCount) || 0, results };
+
+        setStorage('m_results', allRes);
+        return { correct: correct, total: total, percentage: pct, switchCount: parseInt(sc) || 0, results: results };
       }
     };
   </script>
 
-  <!-- Main Application Logic (Identical to Web App) -->
+  <!-- Application Logic (Identical to index.html) -->
   <script>
-    const letters = ['A', 'B', 'C', 'D'];
+    const letters = ['ก', 'ข', 'ค', 'ง'];
 
     const state = {
       teacherToken: null,
@@ -718,97 +1009,169 @@
     };
 
     function showView(id) {
-      document.querySelectorAll('.view').forEach(view => {
-        view.classList.remove('active');
-      });
-      document.getElementById(id).classList.add('active');
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      const target = document.getElementById(id);
+      if (target) target.classList.add('active');
+    }
+
+    function getSubjectBadge(sub) {
+      if (sub === 'biology') return '<span class="badge badge-bio">🧬 ชีววิทยา</span>';
+      if (sub === 'chemistry') return '<span class="badge badge-chm">🧪 เคมี</span>';
+      if (sub === 'physics') return '<span class="badge badge-phy">⚡ ฟิสิกส์</span>';
+      return '<span class="badge badge-gen">🔬 วิทยาศาสตร์</span>';
     }
 
     function teacherLogin() {
+      const u = document.getElementById('teacherUsername').value;
+      const p = document.getElementById('teacherPassword').value;
+
       google.script.run
-        .withSuccessHandler(result => {
-          state.teacherToken = result.token;
-          document.getElementById('teacherInfo').textContent = `ครู: ${result.fullName}`;
+        .withSuccessHandler(res => {
+          state.teacherToken = res.token;
+          document.getElementById('teacherBadge').textContent = `ครู: ${res.fullName}`;
           showView('teacherDashboardView');
           loadRooms();
         })
-        .withFailureHandler(error => showError('teacherLoginError', error))
-        .teacherLogin(
-          document.getElementById('teacherUsername').value,
-          document.getElementById('teacherPassword').value
-        );
+        .withFailureHandler(err => showError('teacherLoginError', err))
+        .teacherLogin(u, p);
+    }
+
+    function registerTeacher() {
+      const name = document.getElementById('regFullName').value;
+      const u = document.getElementById('regUsername').value;
+      const p = document.getElementById('regPassword').value;
+      const cp = document.getElementById('regConfirmPassword').value;
+      const pin = document.getElementById('regRecoveryPin').value;
+      const q = document.getElementById('regSecurityQuestion').value;
+      const a = document.getElementById('regSecurityAnswer').value;
+
+      if (p !== cp) {
+        showError('registerError', 'รหัสผ่านทั้งสองช่องไม่ตรงกัน');
+        return;
+      }
+
+      google.script.run
+        .withSuccessHandler(msg => {
+          alert(msg);
+          document.getElementById('teacherUsername').value = u;
+          document.getElementById('teacherPassword').value = '';
+          showView('teacherLoginView');
+        })
+        .withFailureHandler(err => showError('registerError', err))
+        .registerTeacher(name, u, p, pin, q, a);
+    }
+
+    function fetchSecurityQuestion() {
+      const u = document.getElementById('forgotUsername').value;
+      google.script.run
+        .withSuccessHandler(res => {
+          document.getElementById('displaySecurityQuestion').textContent = res.question;
+          document.getElementById('forgotStep1').style.display = 'none';
+          document.getElementById('forgotStep2').style.display = 'block';
+        })
+        .withFailureHandler(err => showError('forgotError', err))
+        .getSecurityQuestion(u);
+    }
+
+    function submitResetPassword() {
+      const u = document.getElementById('forgotUsername').value;
+      const a = document.getElementById('forgotSecurityAnswer').value;
+      const pin = document.getElementById('forgotRecoveryPin').value;
+      const p = document.getElementById('forgotNewPassword').value;
+      const cp = document.getElementById('forgotConfirmPassword').value;
+
+      if (p !== cp) {
+        showError('forgotError', 'รหัสผ่านใหม่ไม่ตรงกัน');
+        return;
+      }
+
+      google.script.run
+        .withSuccessHandler(msg => {
+          alert(msg);
+          showView('teacherLoginView');
+        })
+        .withFailureHandler(err => showError('forgotError', err))
+        .resetPasswordWithSecurity(u, pin, a, p);
     }
 
     function createRoom() {
+      const name = document.getElementById('newRoomName').value;
+      const subject = document.getElementById('newRoomSubject').value;
+      const classroom = document.getElementById('newRoomClass').value;
+      const easy = document.getElementById('easyCount').value;
+      const med = document.getElementById('mediumCount').value;
+      const hard = document.getElementById('hardCount').value;
+      const time = document.getElementById('newRoomTimeLimit').value;
+
       google.script.run
         .withSuccessHandler(room => {
-          document.getElementById('newRoomCode').innerHTML = `
-            <div class="room-code">
-              รหัสห้อง: ${room.accessCode}<br>
-              <small>เวลา: ${room.timeLimit > 0 ? room.timeLimit + ' นาที' : 'ไม่จำกัดเวลา'} | ส่งรหัสนี้ให้นักเรียน</small>
+          document.getElementById('newRoomCodeBox').innerHTML = `
+            <div style="background: #ecfdf5; border: 1.5px solid #10b981; padding: 16px; border-radius: 10px; margin-top: 14px; text-align: center;">
+              <b style="color: #065f46; font-size: 15px;">สร้างห้องสอบสำเร็จ! ส่งรหัสนี้ให้นักเรียน:</b><br>
+              <span style="font-size: 26px; font-weight: 800; color: #047857; letter-spacing: 1px;">${room.accessCode}</span>
             </div>
           `;
           loadRooms();
         })
-        .withFailureHandler(error => showError('teacherError', error))
-        .createRoom(
-          state.teacherToken,
-          document.getElementById('newRoomName').value,
-          document.getElementById('newRoomClass').value,
-          document.getElementById('easyCount').value,
-          document.getElementById('mediumCount').value,
-          document.getElementById('hardCount').value,
-          document.getElementById('newRoomTimeLimit').value
-        );
+        .withFailureHandler(err => showError('createRoomError', err))
+        .createRoom(state.teacherToken, name, subject, classroom, easy, med, hard, time);
     }
 
     function loadRooms() {
       google.script.run
         .withSuccessHandler(rooms => {
+          if (!rooms || rooms.length === 0) {
+            document.getElementById('roomList').innerHTML = '<p style="text-align: center; color: #64748b;">ยังไม่มีห้องสอบที่เปิดอยู่</p>';
+            return;
+          }
+
           let html = `
-            <table>
-              <tr>
-                <th>ห้อง</th>
-                <th>ชั้น</th>
-                <th>ข้อสอบ</th>
-                <th>เวลาสอบ</th>
-                <th>รหัสห้อง</th>
-                <th>จัดการ</th>
-              </tr>
+            <div class="table-container">
+              <table>
+                <tr>
+                  <th>วิชา</th>
+                  <th>ชื่อห้องสอบ</th>
+                  <th>ชั้น</th>
+                  <th>จำนวนข้อ</th>
+                  <th>เวลา</th>
+                  <th>รหัสห้อง</th>
+                  <th>จัดการ</th>
+                </tr>
           `;
 
-          rooms.forEach(room => {
+          rooms.forEach(r => {
             html += `
               <tr>
-                <td>${escapeHtml(room.name)}</td>
-                <td>${escapeHtml(room.classroom)}</td>
-                <td>ง่าย ${room.easy}<br>กลาง ${room.medium}<br>ยาก ${room.hard}</td>
-                <td>${room.timeLimit > 0 ? room.timeLimit + ' นาที' : 'ไม่จำกัด'}</td>
-                <td><b>${escapeHtml(room.code)}</b></td>
+                <td>${getSubjectBadge(r.subject)}</td>
+                <td><b>${escapeHtml(r.name)}</b></td>
+                <td>${escapeHtml(r.classroom)}</td>
+                <td>ง่าย ${r.easy} | กลาง ${r.medium} | ยาก ${r.hard}</td>
+                <td>${r.timeLimit > 0 ? r.timeLimit + ' นาที' : 'ไม่จำกัด'}</td>
+                <td><code style="font-size: 15px; font-weight: bold; color: var(--primary);">${escapeHtml(r.code)}</code></td>
                 <td>
-                  <button class="small" onclick="showRoomResults('${room.id}')">คะแนน</button>
-                  <button class="small danger" onclick="closeRoom('${room.id}')">ปิดห้อง</button>
+                  <button class="btn-small" onclick="showRoomResults('${r.id}')">ดูคะแนน</button>
+                  <button class="btn-small btn-danger" onclick="closeRoom('${r.id}')">ปิดห้อง</button>
                 </td>
               </tr>
             `;
           });
 
-          html += '</table>';
+          html += '</table></div>';
           document.getElementById('roomList').innerHTML = html;
         })
-        .withFailureHandler(error => showError('teacherError', error))
+        .withFailureHandler(err => alert(err.message || err))
         .getRooms(state.teacherToken);
     }
 
     function closeRoom(roomId) {
-      if (!confirm('ต้องการปิดห้องสอบนี้ใช่หรือไม่?')) return;
+      if (!confirm('ต้องการปิดห้องสอบนี้ใช่หรือไม่? นักเรียนจะไม่สามารถเข้าสอบได้อีก')) return;
 
       google.script.run
         .withSuccessHandler(() => {
           loadRooms();
-          document.getElementById('roomResults').innerHTML = '';
+          document.getElementById('roomResultsSection').innerHTML = '';
         })
-        .withFailureHandler(error => showError('teacherError', error))
+        .withFailureHandler(err => alert(err.message || err))
         .closeRoom(state.teacherToken, roomId);
     }
 
@@ -816,114 +1179,105 @@
       google.script.run
         .withSuccessHandler(results => {
           let html = `
-            <h2>คะแนนนักเรียน</h2>
-            <table>
-              <tr>
-                <th>เวลา</th>
-                <th>ชื่อ</th>
-                <th>ชั้น</th>
-                <th>เลขที่</th>
-                <th>คะแนน</th>
-                <th>สลับหน้าจอ</th>
-                <th>จัดการ</th>
-              </tr>
+            <h2 style="margin-top: 24px;">📊 ผลคะแนนนักเรียน</h2>
+            <div class="table-container">
+              <table>
+                <tr>
+                  <th>เวลาส่ง</th>
+                  <th>ชื่อ-นามสกุล</th>
+                  <th>ชั้น</th>
+                  <th>เลขที่</th>
+                  <th>คะแนนที่ได้</th>
+                  <th>สลับหน้าจอ</th>
+                  <th>การจัดการ</th>
+                </tr>
           `;
 
-          results.forEach(result => {
-            let badgeClass = 'badge-ok';
-            if (result.switchCount > 2) badgeClass = 'badge-danger';
-            else if (result.switchCount > 0) badgeClass = 'badge-warn';
+          if (results.length === 0) {
+            html += '<tr><td colspan="7" style="text-align: center; color: #94a3b8;">ยังไม่มีนักเรียนส่งข้อสอบ</td></tr>';
+          } else {
+            results.forEach(res => {
+              let badge = '<span class="badge diff-easy">0 ครั้ง</span>';
+              if (res.switchCount > 2) badge = `<span class="badge diff-hard">${res.switchCount} ครั้ง</span>`;
+              else if (res.switchCount > 0) badge = `<span class="badge diff-medium">${res.switchCount} ครั้ง</span>`;
 
-            html += `
-              <tr>
-                <td>${escapeHtml(result.time)}</td>
-                <td>${escapeHtml(result.name)}</td>
-                <td>${escapeHtml(result.classroom)}</td>
-                <td>${escapeHtml(result.number)}</td>
-                <td><b>${result.correct}/${result.total}</b> (${result.percentage}%)</td>
-                <td>
-                  <span class="warning-badge ${badgeClass}">${result.switchCount || 0} ครั้ง</span>
-                </td>
-                <td>
-                  <button class="small warning" onclick="resetStudentResult('${result.id}', '${escapeHtml(result.name)}')">อนุญาตสอบใหม่</button>
-                </td>
-              </tr>
-            `;
-          });
+              html += `
+                <tr>
+                  <td>${escapeHtml(res.time)}</td>
+                  <td><b>${escapeHtml(res.name)}</b></td>
+                  <td>${escapeHtml(res.classroom)}</td>
+                  <td>${escapeHtml(res.number)}</td>
+                  <td><b>${res.correct}/${res.total}</b> (${res.percentage}%)</td>
+                  <td>${badge}</td>
+                  <td>
+                    <button class="btn-small btn-warning" onclick="resetStudent('${res.id}', '${escapeHtml(res.name)}')">อนุญาตสอบใหม่</button>
+                  </td>
+                </tr>
+              `;
+            });
+          }
 
-          html += '</table>';
-          document.getElementById('roomResults').innerHTML = html;
+          html += '</table></div>';
+          document.getElementById('roomResultsSection').innerHTML = html;
         })
-        .withFailureHandler(error => showError('teacherError', error))
+        .withFailureHandler(err => alert(err.message || err))
         .getRoomResults(state.teacherToken, roomId);
     }
 
-    function resetStudentResult(resultId, studentName) {
-      if (!confirm(`ต้องการอนุญาตให้ "${studentName}" เข้าสอบใหม่ใช่หรือไม่?\n(ผลคะแนนเดิมของนักเรียนจะถูกลบออกจากระบบ)`)) {
-        return;
-      }
+    function resetStudent(resId, stuName) {
+      if (!confirm(`อนุญาตให้นักเรียน "${stuName}" สอบใหม่หรือไม่?\n(ผลสอบเดิมจะถูกลบออกจากระบบ)`)) return;
 
       google.script.run
         .withSuccessHandler(msg => {
           alert(msg);
-          showRoomResults(state.room ? state.room.id : 'R-SAMPLE');
+          loadRooms();
         })
-        .withFailureHandler(error => showError('teacherError', error))
-        .resetStudentResult(state.teacherToken, resultId);
+        .withFailureHandler(err => alert(err.message || err))
+        .resetStudentResult(state.teacherToken, resId);
     }
 
     function checkRoomCode() {
-      const code = document.getElementById('roomCode').value;
-
+      const c = document.getElementById('roomCodeInput').value;
       google.script.run
-        .withSuccessHandler(room => {
-          state.room = room;
-
-          document.getElementById('roomSummary').innerHTML = `
-            <p><b>${escapeHtml(room.name)}</b></p>
-            <p>ชั้น: ${escapeHtml(room.classroom)}</p>
-            <p>เวลาสอบ: <b>${room.timeLimit > 0 ? room.timeLimit + ' นาที' : 'ไม่จำกัดเวลา'}</b></p>
-            <p>ข้อสอบ: ง่าย ${room.easy} | ปานกลาง ${room.medium} | ยาก ${room.hard}</p>
+        .withSuccessHandler(r => {
+          state.room = r;
+          document.getElementById('roomSummaryBox').innerHTML = `
+            <div style="margin-bottom: 6px;">${getSubjectBadge(r.subject)}</div>
+            <h3 style="margin: 4px 0;">${escapeHtml(r.name)}</h3>
+            <p style="margin: 0; font-size: 14px;">ชั้น: ${escapeHtml(r.classroom)} | เวลาสอบ: <b>${r.timeLimit > 0 ? r.timeLimit + ' นาที' : 'ไม่จำกัด'}</b></p>
           `;
-
           showView('studentProfileView');
         })
-        .withFailureHandler(error => showError('studentCodeError', error))
-        .validateRoomCode(code);
+        .withFailureHandler(err => showError('studentCodeError', err))
+        .validateRoomCode(c);
     }
 
     function startExam() {
+      const name = document.getElementById('stuName').value;
+      const cl = document.getElementById('stuClass').value;
+      const num = document.getElementById('stuNumber').value;
+
       google.script.run
-        .withSuccessHandler(result => {
-          state.studentToken = result.token;
-          state.room = result.room;
+        .withSuccessHandler(res => {
+          state.studentToken = res.token;
+          state.room = res.room;
           state.switchCount = 0;
           state.examSubmitted = false;
 
-          document.getElementById('studentInfo').textContent =
-            `${document.getElementById('studentName').value} | ${state.room.name}`;
-
-          document.getElementById('calculator').classList.toggle(
-            'active',
-            state.room.easy > 0 || state.room.medium > 0 || state.room.hard > 0
-          );
+          document.getElementById('floatingStuInfo').textContent = `${name} | ${cl} เลขที่ ${num}`;
+          document.getElementById('floatingSubjectBadge').innerHTML = getSubjectBadge(state.room.subject);
 
           showView('studentExamView');
           loadExam();
         })
-        .withFailureHandler(error => showError('profileError', error))
-        .startStudentSession(
-          state.room.code,
-          document.getElementById('studentName').value,
-          document.getElementById('studentClass').value,
-          document.getElementById('studentNumber').value
-        );
+        .withFailureHandler(err => showError('profileError', err))
+        .startStudentSession(state.room.code, name, cl, num);
     }
 
     function loadExam() {
       google.script.run
         .withSuccessHandler(showExam)
-        .withFailureHandler(error => showError('studentError', error))
+        .withFailureHandler(err => showError('examError', err))
         .generateStudentExam(state.studentToken);
     }
 
@@ -931,53 +1285,61 @@
       state.exam = exam;
       state.isExamActive = true;
 
-      initTimer(exam.room.timeLimit || state.room.timeLimit || 0);
+      document.getElementById('examTitle').textContent = exam.room.name;
 
-      let html = `<h2>${escapeHtml(exam.room.name)}</h2>`;
+      initStickyTimer(exam.room.timeLimit || state.room.timeLimit || 0);
 
-      exam.questions.forEach((question, index) => {
+      let html = '';
+      exam.questions.forEach((q, idx) => {
+        let diffBadge = `<span class="badge diff-easy">ง่าย</span>`;
+        if (q.difficulty === 'medium') diffBadge = `<span class="badge diff-medium">ปานกลาง</span>`;
+        else if (q.difficulty === 'hard') diffBadge = `<span class="badge diff-hard">ยาก</span>`;
+
         html += `
-          <div class="question" id="q-${question.id}">
-            <b>ข้อ ${index + 1}. ${escapeHtml(question.question)}</b>
+          <div class="question-card" id="q-${q.id}">
+            <div class="question-meta">
+              <b>ข้อที่ ${idx + 1}</b>
+              ${diffBadge}
+            </div>
+            <div style="font-size: 16px; line-height: 1.5; font-weight: 500; margin-bottom: 12px;">
+              ${escapeHtml(q.question)}
+            </div>
         `;
 
-        question.choices.forEach((choice, choiceIndex) => {
+        q.choices.forEach((choiceText, cIdx) => {
           html += `
-            <label class="choice" data-letter="${letters[choiceIndex]}">
-              <input type="radio" name="a-${question.id}" value="${letters[choiceIndex]}">
-              ${letters[choiceIndex]}. ${escapeHtml(choice)}
+            <label class="choice-item">
+              <input type="radio" name="ans-${q.id}" value="${escapeHtml(choiceText)}">
+              <span class="choice-letter">${letters[cIdx]}.</span>
+              <span>${escapeHtml(choiceText)}</span>
             </label>
           `;
         });
 
-        html += '<div class="feedback"></div></div>';
+        html += '</div>';
       });
 
-      html += '<button onclick="submitExam(false)">ส่งคำตอบและดูคะแนน</button>';
-
-      document.getElementById('examContent').innerHTML = html;
+      html += '<button style="margin-top: 10px; font-size: 16px; padding: 14px;" onclick="submitExam(false)">ส่งคำตอบและดูคะแนน</button>';
+      document.getElementById('examQuestionsContent').innerHTML = html;
     }
 
-    // ---------------------------------------------------------
-    // Countdown Timer System
-    // ---------------------------------------------------------
-    function initTimer(minutes) {
+    function initStickyTimer(mins) {
       clearInterval(state.timerInterval);
-      const container = document.getElementById('timerContainer');
+      const bar = document.getElementById('stickyTimerBar');
 
-      if (!minutes || minutes <= 0) {
-        container.style.display = 'none';
+      if (!mins || mins <= 0) {
+        bar.style.display = 'none';
         return;
       }
 
-      container.style.display = 'flex';
-      state.totalTimeSeconds = minutes * 60;
+      bar.style.display = 'flex';
+      state.totalTimeSeconds = mins * 60;
       state.timeRemainingSeconds = state.totalTimeSeconds;
-      updateTimerDisplay();
+      updateTimerUI();
 
       state.timerInterval = setInterval(() => {
         state.timeRemainingSeconds--;
-        updateTimerDisplay();
+        updateTimerUI();
 
         if (state.timeRemainingSeconds <= 0) {
           clearInterval(state.timerInterval);
@@ -987,173 +1349,139 @@
       }, 1000);
     }
 
-    function updateTimerDisplay() {
-      const minutes = Math.floor(state.timeRemainingSeconds / 60);
-      const seconds = state.timeRemainingSeconds % 60;
-      const display = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-      const textEl = document.getElementById('timerText');
-      const fillEl = document.getElementById('timerProgressFill');
+    function updateTimerUI() {
+      const m = Math.floor(state.timeRemainingSeconds / 60);
+      const s = state.timeRemainingSeconds % 60;
+      const text = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+      const el = document.getElementById('timerDisplay');
+      const fill = document.getElementById('progressFill');
 
-      textEl.textContent = display;
+      el.textContent = `⏳ ${text}`;
 
-      const percentage = (state.timeRemainingSeconds / state.totalTimeSeconds) * 100;
-      fillEl.style.width = `${Math.max(0, percentage)}%`;
+      const pct = (state.timeRemainingSeconds / state.totalTimeSeconds) * 100;
+      fill.style.width = `${Math.max(0, pct)}%`;
 
       if (state.timeRemainingSeconds <= 60) {
-        textEl.classList.add('urgent');
-        fillEl.style.backgroundColor = '#dc2626';
+        el.classList.add('urgent');
+        fill.style.background = '#ef4444';
       } else if (state.timeRemainingSeconds <= 300) {
-        textEl.classList.remove('urgent');
-        fillEl.style.backgroundColor = '#d97706';
+        el.classList.remove('urgent');
+        fill.style.background = '#f59e0b';
       } else {
-        textEl.classList.remove('urgent');
-        fillEl.style.backgroundColor = '#2563eb';
+        el.classList.remove('urgent');
+        fill.style.background = '#2563eb';
       }
     }
 
-    // ---------------------------------------------------------
-    // Anti-Cheat: Tab Switch & Window Blur Detection
-    // ---------------------------------------------------------
-    function handleTabSwitch() {
+    function onCheatDetected() {
       if (!state.isExamActive || state.examSubmitted) return;
 
       state.switchCount++;
-      const modal = document.getElementById('antiCheatModal');
-      document.getElementById('antiCheatMessage').innerHTML = `
-        ระบบตรวจพบว่าคุณสลับหน้าจอหรือออกจากหน้านี้ (ครั้งที่ <b>${state.switchCount}</b>)<br>
-        กรุณาทำข้อสอบให้เสร็จสิ้นในหน้านี้เท่านั้น
-      `;
-      modal.classList.add('active');
+      clearInterval(state.timerInterval);
+      document.getElementById('antiCheatOverlay').classList.add('active');
     }
 
-    function closeAntiCheatModal() {
-      document.getElementById('antiCheatModal').classList.remove('active');
+    function confirmResetPenalty() {
+      document.getElementById('antiCheatOverlay').classList.remove('active');
+      document.getElementById('examQuestionsContent').innerHTML = '<p style="text-align: center;">กำลังรีเซ็ตและสุ่มชุดข้อสอบใหม่...</p>';
+      loadExam();
     }
 
     document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'hidden') {
-        handleTabSwitch();
-      }
+      if (document.visibilityState === 'hidden') onCheatDetected();
     });
-
     window.addEventListener('blur', () => {
-      handleTabSwitch();
+      onCheatDetected();
     });
 
-    // ---------------------------------------------------------
-    // Submit Exam Flow
-    // ---------------------------------------------------------
     function submitExam(isAuto = false) {
       if (state.examSubmitted) return;
 
       const answers = [];
-
-      for (const question of state.exam.questions) {
-        const selected = document.querySelector(
-          `input[name="a-${question.id}"]:checked`
-        );
-
-        if (!selected && !isAuto) {
-          showError('studentError', 'กรุณาตอบให้ครบทุกข้อก่อนส่ง');
+      for (const q of state.exam.questions) {
+        const sel = document.querySelector(`input[name="ans-${q.id}"]:checked`);
+        if (!sel && !isAuto) {
+          showError('examError', 'กรุณาตอบคำถามให้ครบทุกข้อก่อนส่ง');
           return;
         }
-
         answers.push({
-          id: question.id,
-          selected: selected ? selected.value : ''
+          id: q.id,
+          selectedText: sel ? sel.value : ''
         });
       }
 
       state.isExamActive = false;
       state.examSubmitted = true;
       clearInterval(state.timerInterval);
-      document.getElementById('timerContainer').style.display = 'none';
+      document.getElementById('stickyTimerBar').style.display = 'none';
 
       google.script.run
         .withSuccessHandler(showScore)
-        .withFailureHandler(error => {
+        .withFailureHandler(err => {
           state.examSubmitted = false;
-          showError('studentError', error);
+          showError('examError', err);
         })
         .submitStudentExam(state.studentToken, answers, state.switchCount);
     }
 
-    function showScore(result) {
-      let switchWarning = '';
-      if (result.switchCount > 0) {
-        switchWarning = `<br><small style="color: #b91c1c;">(ตรวจพบการสลับหน้าจอ ${result.switchCount} ครั้ง)</small>`;
+    function showScore(res) {
+      let switchText = '';
+      if (res.switchCount > 0) {
+        switchText = `<p style="color: #dc2626; font-size: 13px; margin: 4px 0;">(ตรวจพบการสลับหน้าจอและรีเซ็ตข้อสอบ ${res.switchCount} ครั้ง)</p>`;
       }
 
-      document.getElementById('score').innerHTML = `
-        <div class="score">
-          ได้ ${result.correct} จาก ${result.total} ข้อ<br>
-          คะแนน ${result.percentage}%
-          ${switchWarning}
+      document.getElementById('scoreDisplay').innerHTML = `
+        <div class="score-banner">
+          <h2 style="margin: 0; color: #1d4ed8; font-size: 24px;">คะแนนที่ได้: ${res.correct} / ${res.total} ข้อ</h2>
+          <div style="font-size: 18px; font-weight: 700; color: #2563eb; margin: 4px 0;">คิดเป็น ${res.percentage}%</div>
+          ${switchText}
         </div>
       `;
 
-      result.results.forEach(item => {
+      res.results.forEach(item => {
         const card = document.getElementById(`q-${item.id}`);
         if (!card) return;
 
-        const correctChoice = card.querySelector(
-          `[data-letter="${item.correctAnswer}"]`
-        );
+        if (item.isCorrect) card.classList.add('correct');
+        else card.classList.add('incorrect');
 
-        if (item.isCorrect) {
-          card.classList.add('correct');
-        } else {
-          card.classList.add('incorrect');
-        }
-
-        if (correctChoice) {
-          correctChoice.classList.add('correct-answer');
-        }
+        card.querySelectorAll('.choice-item').forEach(label => {
+          const input = label.querySelector('input');
+          if (input && input.value.trim() === item.correctText.trim()) {
+            label.classList.add('correct-choice');
+          }
+        });
       });
 
-      document.querySelectorAll('#examContent input').forEach(input => {
-        input.disabled = true;
-      });
+      document.querySelectorAll('#examQuestionsContent input').forEach(inp => inp.disabled = true);
     }
 
-    function calc(value) {
-      const display = document.getElementById('calcDisplay');
+    function toggleCalculator() {
+      document.getElementById('calculatorModal').classList.toggle('active');
+    }
 
-      if (value === 'C') {
-        display.value = '';
-        return;
-      }
-
-      if (value === 'back') {
-        display.value = display.value.slice(0, -1);
-        return;
-      }
-
-      if (value === '=') {
+    function calc(val) {
+      const disp = document.getElementById('calcDisplay');
+      if (val === 'C') { disp.value = ''; return; }
+      if (val === 'back') { disp.value = disp.value.slice(0, -1); return; }
+      if (val === '=') {
         try {
-          if (!/^[0-9+\-*/().\s]+$/.test(display.value)) throw new Error();
-          const result = Function(`return (${display.value})`)();
-
-          if (!Number.isFinite(result)) throw new Error();
-          display.value = result;
+          if (!/^[0-9+\-*/().\s]+$/.test(disp.value)) throw new Error();
+          const r = Function(`return (${disp.value})`)();
+          disp.value = Number.isFinite(r) ? r : 'Error';
         } catch {
-          display.value = 'Error';
+          disp.value = 'Error';
         }
-
         return;
       }
-
-      if (display.value === 'Error') display.value = '';
-      display.value += value;
+      if (disp.value === 'Error') disp.value = '';
+      disp.value += val;
     }
 
     function goHome() {
       if (state.isExamActive && !state.examSubmitted) {
-        if (!confirm('การสอบยังไม่สิ้นสุด หากออกจากห้อง ผลการสอบจะไม่ถูกบันทึก ยืนยันหรือไม่?')) {
-          return;
-        }
+        if (!confirm('การสอบยังไม่สิ้นสุด หากออกจากห้อง คะแนนจะไม่ถูกบันทึก ยืนยันหรือไม่?')) return;
       }
-
       clearInterval(state.timerInterval);
       state.isExamActive = false;
       state.examSubmitted = false;
@@ -1161,44 +1489,23 @@
       state.studentToken = null;
       state.room = null;
       state.exam = null;
-
+      document.getElementById('stickyTimerBar').style.display = 'none';
+      document.getElementById('calculatorModal').classList.remove('active');
       showView('homeView');
     }
 
-    function showError(id, error) {
+    function showError(id, err) {
       const el = document.getElementById(id);
-      el.textContent = `ข้อผิดพลาด: ${error.message || error}`;
+      if (el) el.textContent = `ข้อผิดพลาด: ${err.message || err}`;
     }
 
-    function escapeHtml(value) {
-      return String(value || '')
+    function escapeHtml(val) {
+      return String(val || '')
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#039;');
-    }
-
-    function registerTeacher() {
-      const fullName = document.getElementById('registerName').value;
-      const username = document.getElementById('registerUsername').value;
-      const password = document.getElementById('registerPassword').value;
-      const confirmPassword = document.getElementById('registerConfirmPassword').value;
-
-      if (password !== confirmPassword) {
-        showError('registerTeacherError', 'รหัสผ่านทั้งสองช่องไม่ตรงกัน');
-        return;
-      }
-
-      google.script.run
-        .withSuccessHandler(message => {
-          alert(message);
-          document.getElementById('teacherUsername').value = username;
-          document.getElementById('teacherPassword').value = '';
-          showView('teacherLoginView');
-        })
-        .withFailureHandler(error => showError('registerTeacherError', error))
-        .registerTeacher(fullName, username, password);
     }
   </script>
 </body>
