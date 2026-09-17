@@ -59,14 +59,13 @@
 เปิด Terminal หรือ PowerShell ที่โฟลเดอร์โปรเจกต์นี้ แล้วรันคำสั่งตามลำดับดังนี้:
 
 ```bash
-# 1. เชื่อมต่อกับ GitHub Repository ของคุณ (เปลี่ยน YOUR_USERNAME เป็นชื่อของคุณ)
-git remote add origin https://github.com/YOUR_USERNAME/science-exam-webapp.git
+# 1. ตรวจสอบการเชื่อมต่อกับ GitHub Repository ของคุณ
+git remote -v
 
-# 2. ตั้งชื่อ Branch หลักเป็น main
-git branch -M main
-
-# 3. อัพโหลดไฟล์ขึ้น GitHub
-git push -u origin main
+# 2. เมื่อมีการแก้ไขโค้ดในอนาคต สามารถสั่ง Push ได้ด้วยคำสั่ง:
+git add .
+git commit -m "update: รายละเอียดการแก้ไข"
+git push origin main
 ```
 
 ---
